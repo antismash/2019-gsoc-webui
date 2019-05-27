@@ -5,10 +5,13 @@
   "main": "index.ts",
   "scripts": {
     "build": "webpack",
-    "start:dev": "webpack-dev-server"
+    "start:dev": "webpack-dev-server --port 3000"
   },
   "author": "Jeevan Prakash",
   "license": "AGPL-3.0",
+  "dependencies": {
+    "lit-html": "^1.1.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-typescript": "^7.3.3",
@@ -21,8 +24,5 @@
     "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.4.1"
-  },
-  "dependencies": {
-    "lit-html": "^1.1.0"
   }
 }

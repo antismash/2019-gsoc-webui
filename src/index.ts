@@ -1,5 +1,5 @@
-import Person from './components/Person';
+import Stats from './components/stats';
 
-let person: Person = new Person({ name: "Jeevan", age: 23 }, "Cricket");
-
-person.showProfile();
+const stats = new Stats();
+stats.getStats();
+stats.renderTemplate();
