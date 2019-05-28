@@ -1,4 +1,5 @@
 import { html, render } from 'lit-html';
+import api from '../../../utils/api';
 
 class Stats {
   status: string;
@@ -14,15 +15,21 @@ class Stats {
     this.jobsProcessed = 0;
   }
 
+  setStats = (data) => {
+    const { status, running, queue_length, total_jobs } = data;
+
+    this.status = status;
+    this.runningJobs = running;
+    this.queuedJobs = queue_length;
+    this.jobsProcessed = total_jobs;
+  }
+
   getStats = async () => {
     try {
-      await fetch('https://fungismash.secondarymetabolites.org/api/v1.0/stats')
-        .then((res: object): void => {
-          console.log(res);
-        });
+      const { data } =  await api.get('/data');
+      this.setStats(data);
     } catch (err) {
-      // follwing data to be store in redux
-      this.status = "working...";
+      this.status = "error fetching data...";
       this.loading = false;
       console.log(err);
     }

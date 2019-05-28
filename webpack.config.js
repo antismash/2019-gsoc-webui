@@ -1,4 +1,5 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const isProduction = typeof process.env.NODE_ENV !== 'undefined' && NODE_ENV === 'production';
 const mode = isProduction ? 'production' : 'development';
@@ -58,6 +59,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new Dotenv({}),
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       filename: "./index.html"
