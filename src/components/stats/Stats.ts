@@ -28,6 +28,7 @@ class Stats {
     try {
       const { data } =  await api.get('/data');
       this.setStats(data);
+      this.renderTemplate();
     } catch (err) {
       this.status = "error fetching data...";
       this.loading = false;
