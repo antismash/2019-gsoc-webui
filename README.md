@@ -1,4 +1,41 @@
 # AntiSmash Redesign
 
+## Running Project Locally:
+
+### Running Dummy server
+* create a file called server.json with following content -
+```
+    {
+        "data": {
+            "fast": 0,
+            "legacy": 31,
+            "queue_length": 0,
+            "running": 1,
+            "status": "working",
+            "total_jobs": 509017,
+            "ts_fast": null,
+            "ts_fast_m": null,
+            "ts_legacy": "2019-04-01 23:24",
+            "ts_legacy_m": "2019-04-01T23:24:37Z",
+            "ts_queued": null,
+            "ts_queued_m": null
+        }
+    }
+```
+* install json-server globally
+
+    ``` npm install -g json-server```
+
+* Run dummy server
+
+    ``` json-server server.json -p 3010 -d 2000```
+
+    -d add delay time of 2000ms in sending the response. This is just for the purpose of simulating remote server like experience to the client.
+
+### Start client using webpack
+    
+    npm start
+
+
 ### Useful Links
 A demo project on lit-html : https://github.com/Polymer/lit-html/blob/master/demo/clock
