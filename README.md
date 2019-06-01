@@ -34,7 +34,9 @@
 
 ### Start client using webpack
     
-    npm start
+   * ``` git clone https://github.com/antismash/2019-gsoc-webui.git ```
+   * ``` npm install ```
+   * ``` npm start ```
 
 
 ### Useful Links
