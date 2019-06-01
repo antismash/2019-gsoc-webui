@@ -1,18 +1,23 @@
 import { html, render } from 'lit-html';
+import LitRender from './LitRender';
 import api from '../../../utils/api';
 
-class Stats {
+class Stats extends LitRender(HTMLElement) {
   status: string;
   runningJobs: number;
   queuedJobs: number;
   jobsProcessed: number;
-  loading: boolean;
+  needsRender: boolean;
 
   constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
     this.status = "fetching status...";
     this.runningJobs = 0;
     this.queuedJobs = 0;
     this.jobsProcessed = 0;
+    this.invalidate();
+    this.fetchStats();
   }
 
   setStats = (data) => {
@@ -24,35 +29,18 @@ class Stats {
     this.jobsProcessed = total_jobs;
   }
 
-  getStats = async () => {
+  fetchStats = async () => {
     try {
       const { data } =  await api.get('/data');
       this.setStats(data);
-      this.renderTemplate();
+      this.invalidate();
     } catch (err) {
       this.status = "error fetching data...";
-      this.loading = false;
       console.log(err);
     }
   }
-
-  renderTemplate = () => {
-    const arr = [
-      { key: "server status: ", val: this.status },
-      { key: "Running Jobs: ", val: this.runningJobs },
-      { key: "Queued Jobs", val: this.queuedJobs },
-      { key: "Jobs Processed", val: this.jobsProcessed },
-    ];
-
-    const fieldTemplate = (key, value) => html`
-      <div>${key}: ${value}</div>
-    `;
-
-    const statsTemplate = html`
-      ${arr.map(({ key, val }) => fieldTemplate(key, val))}
-    `;
-    render(statsTemplate, document.getElementById('stats'));
-  }
 }
+
+customElements.define('server-stats', Stats);
 
 export default Stats;
