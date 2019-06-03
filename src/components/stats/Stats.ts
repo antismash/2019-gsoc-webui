@@ -1,5 +1,5 @@
 import { html, render } from 'lit-html';
-import LitRender from './LitRender';
+import LitRender from '../LitRender';
 import api from '../../../utils/api';
 
 class Stats extends LitRender(HTMLElement) {
@@ -7,7 +7,6 @@ class Stats extends LitRender(HTMLElement) {
   running: number;
   queue_length: number;
   total_jobs: number;
-  needsRender: boolean;
 
   setStats = (data) => {
     const { status, running, queue_length, total_jobs } = data;
