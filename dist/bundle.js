@@ -3467,10 +3467,10 @@ process.umask = function() { return 0; };
 
 /***/ }),
 
-/***/ "./src/components/stats/LitRender.ts":
-/*!*******************************************!*\
-  !*** ./src/components/stats/LitRender.ts ***!
-  \*******************************************/
+/***/ "./src/components/LitRender/LitRender.ts":
+/*!***********************************************!*\
+  !*** ./src/components/LitRender/LitRender.ts ***!
+  \***********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3481,6 +3481,7 @@ const lit_html_1 = __webpack_require__(/*! lit-html */ "./node_modules/lit-html/
 const LitRender = (base) => class extends base {
     constructor() {
         super(...arguments);
+        this.needsRender = false;
         this.invalidate = async (renderTemplate) => {
             if (!this.needsRender) {
                 this.needsRender = true;
@@ -3492,6 +3493,25 @@ const LitRender = (base) => class extends base {
     }
 };
 exports.default = LitRender;
+
+
+/***/ }),
+
+/***/ "./src/components/LitRender/index.ts":
+/*!*******************************************!*\
+  !*** ./src/components/LitRender/index.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const LitRender_1 = __importDefault(__webpack_require__(/*! ./LitRender */ "./src/components/LitRender/LitRender.ts"));
+exports.default = LitRender_1.default;
 
 
 /***/ }),
@@ -3510,7 +3530,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lit_html_1 = __webpack_require__(/*! lit-html */ "./node_modules/lit-html/lit-html.js");
-const LitRender_1 = __importDefault(__webpack_require__(/*! ./LitRender */ "./src/components/stats/LitRender.ts"));
+const LitRender_1 = __importDefault(__webpack_require__(/*! ../LitRender */ "./src/components/LitRender/index.ts"));
 const api_1 = __importDefault(__webpack_require__(/*! ../../../utils/api */ "./utils/api.ts"));
 class Stats extends LitRender_1.default(HTMLElement) {
     constructor() {
