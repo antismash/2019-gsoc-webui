@@ -1,6 +1,7 @@
 import { render, html } from 'lit-html';
 
 const LitRender = (base) => class extends base {
+  needsRender: boolean = false;
   invalidate = async (renderTemplate) => {
     if (!this.needsRender) {
       this.needsRender = true;
