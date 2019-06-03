@@ -3,7 +3,7 @@
 ## Running Project Locally:
 
 ### Running Dummy server
-* create a file called server.json with following content -
+* create a file called server.json with following content-
 ```
     {
         "data": {
@@ -31,6 +31,16 @@
     ``` json-server server.json -p 3010 -d 2000```
 
     -d add delay time of 2000ms in sending the response. This is just for the purpose of simulating remote server like experience to the client.
+
+
+
+* create .env file in project home directory and add following lines
+
+    ```
+    # .env
+    
+    API_BASE_URL=http://localhost:3010/
+    ```
 
 ### Start client using webpack
     
