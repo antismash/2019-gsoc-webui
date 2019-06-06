@@ -31,7 +31,7 @@ class Stats extends LitRender(HTMLElement) {
 
   fetchStats = async () => {
     try {
-      const { data } =  await api.get('/data');
+      const { data } =  await api.get('/stats');
       this.setStats(data);
       this.invalidate(this.renderTemplate);
     } catch (err) {
