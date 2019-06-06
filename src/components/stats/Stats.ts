@@ -1,6 +1,8 @@
 import { html, render } from 'lit-html';
 import LitRender from '../LitRender';
+
 import api from '../../../utils/api';
+import colors from '../../../utils/theme';
 
 class Stats extends LitRender(HTMLElement) {
   status: string;
@@ -49,7 +51,37 @@ class Stats extends LitRender(HTMLElement) {
     ];
 
    return html`
-      ${arr.map(({ key, val }) => html`<div>${key}: ${val}</div>`)}
+      <style>
+        ul {
+          padding: 0;
+          margin: 1rem;
+          list-style: none;
+          border: 1px solid ${colors.gray};
+          border-bottom: none;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1rem;
+          min-height: 40px;
+          border-bottom: 1px solid ${colors.gray};
+        }
+        .badge {
+          background-color: ${colors.darkGray};
+          border-radius: 10px;
+          padding: 3px 7px;
+          color: #fff;
+          font-weight: bold;
+        }
+      </style>
+      <ul>
+        ${arr.map(({ key, val }) => html`<li>
+          <span>${key} </span>
+          <span class="badge">${val}</span>
+        </li>`)}
+      </ul>
     `;
 
     // render(statsTemplate, document.getElementById('stats'));
