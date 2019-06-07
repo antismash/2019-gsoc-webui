@@ -6,7 +6,7 @@
 * create a file called server.json with following content-
 ```
     {
-        "data": {
+        "stats": {
             "fast": 0,
             "legacy": 31,
             "queue_length": 0,

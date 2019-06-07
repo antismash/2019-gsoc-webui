@@ -3532,6 +3532,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lit_html_1 = __webpack_require__(/*! lit-html */ "./node_modules/lit-html/lit-html.js");
 const LitRender_1 = __importDefault(__webpack_require__(/*! ../LitRender */ "./src/components/LitRender/index.ts"));
 const api_1 = __importDefault(__webpack_require__(/*! ../../../utils/api */ "./utils/api.ts"));
+const theme_1 = __importDefault(__webpack_require__(/*! ../../../utils/theme */ "./utils/theme.ts"));
 class Stats extends LitRender_1.default(HTMLElement) {
     constructor() {
         super();
@@ -3544,7 +3545,7 @@ class Stats extends LitRender_1.default(HTMLElement) {
         };
         this.fetchStats = async () => {
             try {
-                const { data } = await api_1.default.get('/data');
+                const { data } = await api_1.default.get('/stats');
                 this.setStats(data);
                 this.invalidate(this.renderTemplate);
             }
@@ -3561,7 +3562,37 @@ class Stats extends LitRender_1.default(HTMLElement) {
                 { key: "Jobs Processed", val: this.total_jobs },
             ];
             return lit_html_1.html `
-      ${arr.map(({ key, val }) => lit_html_1.html `<div>${key}: ${val}</div>`)}
+      <style>
+        ul {
+          padding: 0;
+          margin: 1rem;
+          list-style: none;
+          border: 1px solid ${theme_1.default.gray};
+          border-bottom: none;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1rem;
+          min-height: 40px;
+          border-bottom: 1px solid ${theme_1.default.gray};
+        }
+        .badge {
+          background-color: ${theme_1.default.darkGray};
+          border-radius: 10px;
+          padding: 3px 7px;
+          color: #fff;
+          font-weight: bold;
+        }
+      </style>
+      <ul>
+        ${arr.map(({ key, val }) => lit_html_1.html `<li>
+          <span>${key} </span>
+          <span class="badge">${val}</span>
+        </li>`)}
+      </ul>
     `;
             // render(statsTemplate, document.getElementById('stats'));
         };
@@ -3636,6 +3667,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
 const api = axios_1.default.create({ baseURL: "http://localhost:3010/" });
 exports.default = api;
+
+
+/***/ }),
+
+/***/ "./utils/theme.ts":
+/*!************************!*\
+  !*** ./utils/theme.ts ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const colors = {
+    gray: '#ddd',
+    darkGray: '#bbb',
+};
+exports.default = colors;
 
 
 /***/ })
