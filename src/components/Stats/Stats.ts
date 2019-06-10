@@ -3,14 +3,14 @@ import LitRender from '../LitRender';
 
 import api from '../../../utils/api';
 import colors from '../../../utils/theme';
-// import store from '../../Store';
+import store from '../../Store';
 
 class Stats extends LitRender(HTMLElement) {
   status: string;
   running: number;
   queue_length: number;
   total_jobs: number;
-  // counter: number = 0;
+  counter: number = 0;
 
   setStats = ({status, running, queue_length, total_jobs}) => {
     this.status = status;
@@ -29,6 +29,11 @@ class Stats extends LitRender(HTMLElement) {
       total_jobs: 0
     });
 
+    store.subscribe(() => {
+      this.counter = store.getState();
+      this.invalidate(this.renderTemplate);
+    });
+
     this.invalidate(this.renderTemplate);
     this.fetchStats();
   }
@@ -42,6 +47,14 @@ class Stats extends LitRender(HTMLElement) {
       this.status = "error fetching data...";
       console.log(err);
     }
+  }
+
+  increment = () => {
+    store.dispatch({ type: 'INCREMENT' });
+  }
+
+  decrement = () => {
+    store.dispatch({ type: 'DECREMENT' });
   }
 
   renderTemplate = () => {
@@ -84,6 +97,9 @@ class Stats extends LitRender(HTMLElement) {
           <span class="badge">${val}</span>
         </li>`)}
       </ul>
+      <button @click="${this.increment}">increment</button>
+      <button @click="${this.decrement}">decrement</button>
+      <span>${this.counter}</span>
     `;
 
     // render(statsTemplate, document.getElementById('stats'));
