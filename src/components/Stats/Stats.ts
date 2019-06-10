@@ -1,36 +1,29 @@
-import { html, render } from 'lit-html';
+import { html } from 'lit-html';
 import LitRender from '../LitRender';
+
+import StatsInterface from '../../Interfaces/ServerStats';
 
 import api from '../../../utils/api';
 import colors from '../../../utils/theme';
 import store from '../../Store';
 
 class Stats extends LitRender(HTMLElement) {
-  status: string;
-  running: number;
-  queue_length: number;
-  total_jobs: number;
-  counter: number = 0;
+  stats: StatsInterface;
 
-  setStats = ({status, running, queue_length, total_jobs}) => {
-    this.status = status;
-    this.running = running;
-    this.queue_length = queue_length;
-    this.total_jobs = total_jobs;
+  setStats = (data) => {
+    this.stats = { ...data };
   }
 
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this.setStats({
-      status: "fetching status...",
-      running: 0,
-      queue_length: 0,
-      total_jobs: 0
-    });
+
+    const { ServerStats } = store.getState();
+    this.setStats(ServerStats);
 
     store.subscribe(() => {
-      this.counter = store.getState();
+      const { ServerStats } = store.getState();
+      this.setStats(ServerStats);
       this.invalidate(this.renderTemplate);
     });
 
@@ -40,8 +33,13 @@ class Stats extends LitRender(HTMLElement) {
 
   fetchStats = async () => {
     try {
-      const { data } =  await api.get('/stats');
-      this.setStats(data);
+      const { data: ServerStats } =  await api.get('/stats');
+  
+      store.dispatch({
+        type: 'UpdateStats',
+        values: { ...ServerStats }
+      });
+  
       this.invalidate(this.renderTemplate);
     } catch (err) {
       this.status = "error fetching data...";
@@ -49,20 +47,13 @@ class Stats extends LitRender(HTMLElement) {
     }
   }
 
-  increment = () => {
-    store.dispatch({ type: 'INCREMENT' });
-  }
-
-  decrement = () => {
-    store.dispatch({ type: 'DECREMENT' });
-  }
-
   renderTemplate = () => {
+    const { status, running, queue_length, total_jobs } = this.stats;
     const arr = [
-      { key: "server status: ", val: this.status },
-      { key: "Running Jobs: ", val: this.running },
-      { key: "Queued Jobs", val: this.queue_length },
-      { key: "Jobs Processed", val: this.total_jobs },
+      { key: "server status: ", val: status },
+      { key: "Running Jobs: ", val: running },
+      { key: "Queued Jobs", val: queue_length },
+      { key: "Jobs Processed", val: total_jobs },
     ];
 
    return html`
@@ -97,9 +88,6 @@ class Stats extends LitRender(HTMLElement) {
           <span class="badge">${val}</span>
         </li>`)}
       </ul>
-      <button @click="${this.increment}">increment</button>
-      <button @click="${this.decrement}">decrement</button>
-      <span>${this.counter}</span>
     `;
 
     // render(statsTemplate, document.getElementById('stats'));

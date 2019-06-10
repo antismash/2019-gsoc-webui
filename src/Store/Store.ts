@@ -1,6 +1,9 @@
-import { createStore } from 'redux';
+import { createStore, combineReducers } from 'redux';
 
-import counter from '../Reducers/Counter';
+import ServerStats from '../Reducers/ServerStats';
 
-let store = createStore(counter);
+let store = createStore(combineReducers({
+  ServerStats
+}));
+
 export default store;
