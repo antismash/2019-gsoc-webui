@@ -3,15 +3,16 @@ import LitRender from '../LitRender';
 
 import api from '../../../utils/api';
 import colors from '../../../utils/theme';
+// import store from '../../Store';
 
 class Stats extends LitRender(HTMLElement) {
   status: string;
   running: number;
   queue_length: number;
   total_jobs: number;
+  // counter: number = 0;
 
-  setStats = (data) => {
-    const { status, running, queue_length, total_jobs } = data;
+  setStats = ({status, running, queue_length, total_jobs}) => {
     this.status = status;
     this.running = running;
     this.queue_length = queue_length;
@@ -27,6 +28,7 @@ class Stats extends LitRender(HTMLElement) {
       queue_length: 0,
       total_jobs: 0
     });
+
     this.invalidate(this.renderTemplate);
     this.fetchStats();
   }
