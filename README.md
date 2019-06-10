@@ -52,6 +52,10 @@
 ### Useful Links
 * A demo project on lit-html : https://github.com/Polymer/lit-html/blob/master/demo/clock
 
-* YouTube talk: https://www.youtube.com/watch?v=Io6JjgckHbg
+* YouTube links:
+
+    https://www.youtube.com/watch?v=Io6JjgckHbg
+
+    https://www.youtube.com/watch?v=ypPRdtjGooc
 
 * HTMLElement Interface: https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
