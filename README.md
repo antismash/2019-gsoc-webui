@@ -33,15 +33,6 @@
     -d add delay time of 2000ms in sending the response. This is just for the purpose of simulating remote server like experience to the client.
 
 
-
-* create .env file in project home directory and add following lines
-
-    ```
-    # .env
-    
-    API_BASE_URL=http://localhost:3010/
-    ```
-
 ### Start client using webpack
     
    * ``` git clone https://github.com/antismash/2019-gsoc-webui.git ```
