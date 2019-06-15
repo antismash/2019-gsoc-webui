@@ -2,8 +2,8 @@ import { html } from 'lit-html';
 import LitRender from '../LitRender';
 
 import StatsInterface from '../../Interfaces/ServerStats';
+import axios from 'axios';
 
-import api from '../../../utils/api';
 import colors from '../../../utils/theme';
 import store from '../../Store';
 
@@ -33,7 +33,7 @@ class Stats extends LitRender(HTMLElement) {
 
   fetchStats = async () => {
     try {
-      const { data: ServerStats } =  await api.get('/stats');
+      const { data: ServerStats } =  await axios.get('/stats');
   
       store.dispatch({
         type: 'UpdateStats',
@@ -42,7 +42,7 @@ class Stats extends LitRender(HTMLElement) {
   
       this.invalidate(this.renderTemplate);
     } catch (err) {
-      this.status = "error fetching data...";
+      this.setStats({status: "error fetching data...", running: -1, queue_length: -1, total_jobs: -1});
       console.log(err);
     }
   }

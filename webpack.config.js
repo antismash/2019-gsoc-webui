@@ -19,6 +19,11 @@ module.exports = {
       extensions: [".ts", ".js", ".json"]
   },
   devtool: "source-map",
+  devServer: {
+    proxy: {
+      '/stats': 'http://localhost:3010'
+    }
+  },
   module: {
     rules: [
       {
