@@ -4,7 +4,7 @@ import LitRender from '../LitRender';
 import StatsInterface from '../../Interfaces/ServerStats';
 import axios from 'axios';
 
-import colors from '../../../utils/theme';
+import colors from '../../utils/theme';
 import store from '../../Store';
 
 class Stats extends LitRender(HTMLElement) {
@@ -50,7 +50,7 @@ class Stats extends LitRender(HTMLElement) {
   renderTemplate = () => {
     const { status, running, queue_length, total_jobs } = this.stats;
     const arr = [
-      { key: "server status: ", val: status },
+      { key: "Server status: ", val: status },
       { key: "Running Jobs: ", val: running },
       { key: "Queued Jobs", val: queue_length },
       { key: "Jobs Processed", val: total_jobs },

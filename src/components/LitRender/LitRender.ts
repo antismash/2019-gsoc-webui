@@ -1,4 +1,4 @@
-import { render, html } from 'lit-html';
+import { render } from 'lit-html';
 
 const LitRender = (base) => class extends base {
   needsRender: boolean = false;
