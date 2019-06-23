@@ -7,7 +7,7 @@
     "build": "webpack",
     "start": "webpack-dev-server --port 3001"
   },
-  "author": "Jeevan Prakash",
+  "authors": ["Jeevan Prakash"],
   "license": "AGPL-3.0",
   "dependencies": {
     "axios": "^0.18.0",

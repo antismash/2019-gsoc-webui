@@ -21,7 +21,8 @@ module.exports = {
   devtool: "source-map",
   devServer: {
     proxy: {
-      '/stats': 'http://localhost:3010'
+      '/stats': 'http://localhost:3010',
+      '/news': 'http://localhost:3010'
     }
   },
   module: {

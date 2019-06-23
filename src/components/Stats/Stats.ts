@@ -89,8 +89,6 @@ class Stats extends LitRender(HTMLElement) {
         </li>`)}
       </ul>
     `;
-
-    // render(statsTemplate, document.getElementById('stats'));
   }
 }
 
