@@ -64,33 +64,42 @@ class News extends Litrender(HTMLElement) {
 
   renderTemplate = () => {
     const { teaser, text } = this.news.notices[0];
+    const type = this.getAttribute('type');
 
     return html`
       <style>
         #cross {
           opacity: 0.8;
+          font-weight: bold;
           float: right;
           cursor: pointer;
         }
         #cross:hover {
           color: #31708f;
         }
-        #container {
-          padding: 1rem;
+        .commonStyle {
           position: absolute;
           z-index: 10;
+          padding: 1rem;
+          opacity: ${text === 'loading' ? 0 : 1};
+          border-radius: 5px;
+          transition: opacity 2s;
+        }
+        #container {
           top: 60px;
           right: 10px;
           width: 250px;
-          border: solid 1px #31708f;
-          border-radius: 5px;
+          border: #31708f;
           background: linear-gradient(to bottom, #d9edf7 0, #b9def0 100%);
-          opacity: ${text === 'loading' ? 0 : 1};
-          transition: opacity 2s;
+        }
+        #errorContainer {
+          border: solid 1px #dca7a7;
+          background: linear-gradient(to bottom, #f2dede 0, #e7c3c3 100%);
+          color: #a94442;
         }
       </style>
-      <div id="container">
-        <div id="cross" @click="${e => {e.target.parentElement.style.display = "none";}}">&#10008;</div>
+      <div class="commonStyle" id=${type === 'error' ? 'errorContainer' : 'container'}>
+        <div id="cross" @click="${e => {e.target.parentElement.style.display = "none";}}">&#10005;</div>
         <h3>${teaser}</h3>
         <p>${text}</p>
       </div>
