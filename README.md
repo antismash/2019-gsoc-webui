@@ -19,6 +19,18 @@
             "ts_legacy_m": "2019-04-01T23:24:37Z",
             "ts_queued": null,
             "ts_queued_m": null
+        },
+        "news": {
+            "notices": [
+                {
+                    "added": "2019-01-21 12:29:09.961799",
+                    "category": "info",
+                    "show_from": "2019-01-21 12:29:09.959806",
+                    "show_until": "2019-01-28 12:29:09.959806",
+                    "teaser": "Incomplete RefSeq annotations",
+                    "text": "Dear antiSMASH users, it has come to our attention that a recent RefSeq reannotation again broke NRPS/PKS ORFs. If your results look weird, try uploading the corresponding GenBank record or a FASTA file."
+                }
+            ]
         }
     }
 ```
