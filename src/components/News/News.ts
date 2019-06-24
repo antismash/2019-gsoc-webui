@@ -46,10 +46,6 @@ class News extends Litrender(HTMLElement) {
           {
             text: "error",
             teaser: "Error loading news...",
-            added: '',
-            category: '',
-            show_from: '',
-            show_until: ''
           }
         ]
       });
@@ -69,6 +65,7 @@ class News extends Litrender(HTMLElement) {
     return html`
       <style>
         #cross {
+          display: ${type === 'error' ? 'none' : 'block'};
           opacity: 0.8;
           font-weight: bold;
           float: right;
@@ -100,8 +97,8 @@ class News extends Litrender(HTMLElement) {
       </style>
       <div class="commonStyle" id=${type === 'error' ? 'errorContainer' : 'container'}>
         <div id="cross" @click="${e => {e.target.parentElement.style.display = "none";}}">&#10005;</div>
-        <h3>${teaser}</h3>
-        <p>${text}</p>
+        <h3>${type==='error' ? this.getAttribute('heading') : teaser}</h3>
+        <p>${type==='error' ? this.getAttribute('text') : text}</p>
       </div>
     `;
   }
