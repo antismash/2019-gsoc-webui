@@ -55,7 +55,7 @@
 Include following custom tags into index.html -
 * Stats component: ```<server-stats></server-stats>```
 * News component: ```<server-news></server-news>```
-* Stats component:
+* Error component:
     
     ```<server-news type="error" heading="HEADING OF ERROR" text="TEXT TO BE SHOWN (BELOW HEADING)"></server-news>```
 
