@@ -8,6 +8,7 @@ import store from '../../Store';
 
 class News extends Litrender(HTMLElement) {
   news: NewsInterface;
+  loading: boolean = false;
 
   setNews(data) {
     this.news = { ...data };
@@ -32,13 +33,14 @@ class News extends Litrender(HTMLElement) {
 
   fetchNews = async () => {
     try {
+      this.loading = true;
       const { data: ServerNews } = await axios.get('/news');
 
       store.dispatch({
         type: "UpdateNews",
         values: { ...ServerNews }
       });
-
+      this.loading = false;
       this.invalidate(this.renderTemplate);
     } catch (err) {
       this.setNews({
@@ -61,11 +63,12 @@ class News extends Litrender(HTMLElement) {
   renderTemplate = () => {
     const { teaser, text } = this.news.notices[0];
     const type = this.getAttribute('type');
+    const textMessage = this.getAttribute('text');
+    const heading = this.getAttribute('heading');
 
     return html`
       <style>
         #cross {
-          display: ${type === 'error' ? 'none' : 'block'};
           opacity: 0.8;
           font-weight: bold;
           float: right;
@@ -75,14 +78,14 @@ class News extends Litrender(HTMLElement) {
           color: #31708f;
         }
         .commonStyle {
-          position: absolute;
-          z-index: 10;
           padding: 1rem;
-          opacity: ${text === 'loading' ? 0 : 1};
+          opacity: ${this.loading ? 0 : 1};
           border-radius: 5px;
-          transition: opacity 2s;
+          transition: opacity 1s;
         }
         #container {
+          position: absolute;
+          z-index: 10;
           top: 60px;
           right: 10px;
           width: 250px;
@@ -97,8 +100,8 @@ class News extends Litrender(HTMLElement) {
       </style>
       <div class="commonStyle" id=${type === 'error' ? 'errorContainer' : 'container'}>
         <div id="cross" @click="${e => {e.target.parentElement.style.display = "none";}}">&#10005;</div>
-        <h3>${type==='error' ? this.getAttribute('heading') : teaser}</h3>
-        <p>${type==='error' ? this.getAttribute('text') : text}</p>
+        <h3>${ heading === null ? teaser : heading}</h3>
+        <p>${textMessage === null ? text : textMessage}</p>
       </div>
     `;
   }
