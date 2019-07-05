@@ -54,10 +54,10 @@
 ### Using various components
 Include following custom tags into index.html -
 * Stats component: ```<server-stats></server-stats>```
-* News component: ```<server-news></server-news>```
-* Error component:
-    
-    ```<server-news type="error" heading="HEADING OF ERROR" text="TEXT TO BE SHOWN (BELOW HEADING)"></server-news>```
+
+* News component: ```<server-news heading="{NEWS HEADING}" text={{TEXT TO BE SHOWN (BELOW HEADING)}></server-news>```
+
+* Error component: ```<server-news type="error" heading="{HEADING OF ERROR}" text="{TEXT TO BE SHOWN (BELOW HEADING)}"></server-news>```
 
 ### Useful Links
 * A demo project on lit-html : https://github.com/Polymer/lit-html/blob/master/demo/clock

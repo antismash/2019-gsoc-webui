@@ -4252,6 +4252,40 @@ module.exports = function(originalModule) {
 
 /***/ }),
 
+/***/ "./src/Reducers/ServerNews.ts":
+/*!************************************!*\
+  !*** ./src/Reducers/ServerNews.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function serverNews(ServerNews, action) {
+    const { type, values } = action;
+    if (!ServerNews) {
+        return {
+            notices: [
+                {
+                    teaser: "Loading...",
+                    text: "loading"
+                }
+            ]
+        };
+    }
+    switch (type) {
+        case 'UpdateNews':
+            return { ...ServerNews, ...values };
+        default:
+            return ServerNews;
+    }
+}
+exports.default = serverNews;
+
+
+/***/ }),
+
 /***/ "./src/Reducers/ServerStats.ts":
 /*!*************************************!*\
   !*** ./src/Reducers/ServerStats.ts ***!
@@ -4299,8 +4333,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const redux_1 = __webpack_require__(/*! redux */ "./node_modules/redux/es/redux.js");
 const ServerStats_1 = __importDefault(__webpack_require__(/*! ../Reducers/ServerStats */ "./src/Reducers/ServerStats.ts"));
+const ServerNews_1 = __importDefault(__webpack_require__(/*! ../Reducers/ServerNews */ "./src/Reducers/ServerNews.ts"));
 let store = redux_1.createStore(redux_1.combineReducers({
-    ServerStats: ServerStats_1.default
+    ServerStats: ServerStats_1.default,
+    ServerNews: ServerNews_1.default,
 }));
 exports.default = store;
 
@@ -4375,6 +4411,138 @@ exports.default = LitRender_1.default;
 
 /***/ }),
 
+/***/ "./src/components/News/News.ts":
+/*!*************************************!*\
+  !*** ./src/components/News/News.ts ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const lit_html_1 = __webpack_require__(/*! lit-html */ "./node_modules/lit-html/lit-html.js");
+const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+const LitRender_1 = __importDefault(__webpack_require__(/*! ../LitRender */ "./src/components/LitRender/index.ts"));
+const Store_1 = __importDefault(__webpack_require__(/*! ../../Store */ "./src/Store/index.ts"));
+class News extends LitRender_1.default(HTMLElement) {
+    constructor() {
+        super();
+        this.loading = false;
+        this.fetchNews = async () => {
+            try {
+                this.loading = true;
+                const { data: ServerNews } = await axios_1.default.get('/news');
+                Store_1.default.dispatch({
+                    type: "UpdateNews",
+                    values: { ...ServerNews }
+                });
+                this.loading = false;
+                this.invalidate(this.renderTemplate);
+            }
+            catch (err) {
+                this.setNews({
+                    notices: [
+                        {
+                            text: "error",
+                            teaser: "Error loading news...",
+                        }
+                    ]
+                });
+                console.log(err);
+            }
+        };
+        this.hideNews = e => {
+            console.log(e);
+            e.target.parentElement.style.display = "none";
+        };
+        this.renderTemplate = () => {
+            const { teaser, text } = this.news.notices[0];
+            const type = this.getAttribute('type');
+            const textMessage = this.getAttribute('text');
+            const heading = this.getAttribute('heading');
+            return lit_html_1.html `
+      <style>
+        #cross {
+          opacity: 0.8;
+          font-weight: bold;
+          float: right;
+          cursor: pointer;
+        }
+        #cross:hover {
+          color: #31708f;
+        }
+        .commonStyle {
+          padding: 1rem;
+          opacity: ${this.loading ? 0 : 1};
+          border-radius: 5px;
+          transition: opacity 1s;
+        }
+        #container {
+          position: absolute;
+          z-index: 10;
+          top: 60px;
+          right: 10px;
+          width: 250px;
+          border: #31708f;
+          background: linear-gradient(to bottom, #d9edf7 0, #b9def0 100%);
+        }
+        #errorContainer {
+          border: solid 1px #dca7a7;
+          background: linear-gradient(to bottom, #f2dede 0, #e7c3c3 100%);
+          color: #a94442;
+        }
+      </style>
+      <div class="commonStyle" id=${type === 'error' ? 'errorContainer' : 'container'}>
+        <div id="cross" @click="${e => { e.target.parentElement.style.display = "none"; }}">&#10005;</div>
+        <h3>${heading === null ? teaser : heading}</h3>
+        <p>${textMessage === null ? text : textMessage}</p>
+      </div>
+    `;
+        };
+        this.attachShadow({ mode: 'open' });
+        const { ServerNews } = Store_1.default.getState();
+        this.setNews(ServerNews);
+        Store_1.default.subscribe(() => {
+            const { ServerNews } = Store_1.default.getState();
+            this.setNews(ServerNews);
+            this.invalidate(this.renderTemplate);
+        });
+        this.invalidate(this.renderTemplate);
+        this.fetchNews();
+    }
+    setNews(data) {
+        this.news = { ...data };
+    }
+}
+customElements.define('server-news', News);
+exports.default = News;
+
+
+/***/ }),
+
+/***/ "./src/components/News/index.ts":
+/*!**************************************!*\
+  !*** ./src/components/News/index.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const News_1 = __importDefault(__webpack_require__(/*! ./News */ "./src/components/News/News.ts"));
+exports.default = News_1.default;
+
+
+/***/ }),
+
 /***/ "./src/components/Stats/Stats.ts":
 /*!***************************************!*\
   !*** ./src/components/Stats/Stats.ts ***!
@@ -4390,8 +4558,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const lit_html_1 = __webpack_require__(/*! lit-html */ "./node_modules/lit-html/lit-html.js");
 const LitRender_1 = __importDefault(__webpack_require__(/*! ../LitRender */ "./src/components/LitRender/index.ts"));
-const api_1 = __importDefault(__webpack_require__(/*! ../../../utils/api */ "./utils/api.ts"));
-const theme_1 = __importDefault(__webpack_require__(/*! ../../../utils/theme */ "./utils/theme.ts"));
+const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
+const theme_1 = __importDefault(__webpack_require__(/*! ../../utils/theme */ "./src/utils/theme.ts"));
 const Store_1 = __importDefault(__webpack_require__(/*! ../../Store */ "./src/Store/index.ts"));
 class Stats extends LitRender_1.default(HTMLElement) {
     constructor() {
@@ -4401,7 +4569,7 @@ class Stats extends LitRender_1.default(HTMLElement) {
         };
         this.fetchStats = async () => {
             try {
-                const { data: ServerStats } = await api_1.default.get('/stats');
+                const { data: ServerStats } = await axios_1.default.get('/stats');
                 Store_1.default.dispatch({
                     type: 'UpdateStats',
                     values: { ...ServerStats }
@@ -4409,14 +4577,14 @@ class Stats extends LitRender_1.default(HTMLElement) {
                 this.invalidate(this.renderTemplate);
             }
             catch (err) {
-                this.status = "error fetching data...";
+                this.setStats({ status: "error fetching data...", running: -1, queue_length: -1, total_jobs: -1 });
                 console.log(err);
             }
         };
         this.renderTemplate = () => {
             const { status, running, queue_length, total_jobs } = this.stats;
             const arr = [
-                { key: "server status: ", val: status },
+                { key: "Server status: ", val: status },
                 { key: "Running Jobs: ", val: running },
                 { key: "Queued Jobs", val: queue_length },
                 { key: "Jobs Processed", val: total_jobs },
@@ -4454,7 +4622,6 @@ class Stats extends LitRender_1.default(HTMLElement) {
         </li>`)}
       </ul>
     `;
-            // render(statsTemplate, document.getElementById('stats'));
         };
         this.attachShadow({ mode: 'open' });
         const { ServerStats } = Store_1.default.getState();
@@ -4508,34 +4675,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Stats_1 = __importDefault(__webpack_require__(/*! ./components/Stats */ "./src/components/Stats/index.ts"));
 exports.Stats = Stats_1.default;
+const News_1 = __importDefault(__webpack_require__(/*! ./components/News */ "./src/components/News/index.ts"));
+exports.News = News_1.default;
 
 
 /***/ }),
 
-/***/ "./utils/api.ts":
-/*!**********************!*\
-  !*** ./utils/api.ts ***!
-  \**********************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(__webpack_require__(/*! axios */ "./node_modules/axios/index.js"));
-const api = axios_1.default.create({ baseURL: "http://localhost:3010/" });
-exports.default = api;
-
-
-/***/ }),
-
-/***/ "./utils/theme.ts":
-/*!************************!*\
-  !*** ./utils/theme.ts ***!
-  \************************/
+/***/ "./src/utils/theme.ts":
+/*!****************************!*\
+  !*** ./src/utils/theme.ts ***!
+  \****************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 

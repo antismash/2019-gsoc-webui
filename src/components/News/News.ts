@@ -79,6 +79,7 @@ class News extends Litrender(HTMLElement) {
         }
         .commonStyle {
           padding: 1rem;
+          margin: 1rem;
           opacity: ${this.loading ? 0 : 1};
           border-radius: 5px;
           transition: opacity 1s;

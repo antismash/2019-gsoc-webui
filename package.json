@@ -1,6 +1,6 @@
 {
   "name": "common-ui-antismash",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Common UI Library for Bacterial, Fungal UIs",
   "main": "index.ts",
   "scripts": {
