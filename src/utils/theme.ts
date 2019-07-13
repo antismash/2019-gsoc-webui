@@ -1,6 +1,6 @@
 const colors = {
     gray: '#ddd',
-    darkGray: '#bbb',
+    darkGray: '#616467',
 }
 
 export default colors;
