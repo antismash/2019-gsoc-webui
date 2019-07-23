@@ -21,14 +21,13 @@ const HeadingWithLine = (heading, supportText?: any) => html`
   </style>
   <body>
     <div class="heading">
-      ${heading}${supportText ? html`: <span
-        style="">
-        <i>${
+      ${heading}${supportText ? html`: <i>
+        ${
           supportText == 'loose' ? html`
             <i>${supportText}&Tab; <span class="warning">likely to cause false positives</span></i>
           ` : supportText
-        }</i>
-      </span>` : ''}
+        }
+      </i>` : ''}
     </div>
   </body>
 `;

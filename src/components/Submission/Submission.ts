@@ -182,6 +182,7 @@ class Submission extends Litrender(HTMLElement) {
               class="strictnessRange"
               min="0" max="2"
             />
+            ${this.renderWarning(this.formData.strictness)}
           </div>
 
           ${HeadingWithLine("Extra features")}
@@ -189,6 +190,28 @@ class Submission extends Litrender(HTMLElement) {
           <button class="btn" type="submit" @click="${this.handleInput}">Submit</button>
         </form>
       </div>
+    `;
+  }
+
+  renderWarning = (strictness) => {
+    const reasons = [
+      'Detects well-defined clusters containing all required parts.',
+      'Detects partial clusters missing one or more functional parts.',
+      'Detects poorly-defined clusters and clusters that likely match primary metabolites.'
+    ];
+
+    if(strictness == 'strict') {
+      reasons.splice(1,2);
+    } else if(strictness == 'relaxed') {
+      reasons.splice(1,1);
+    }
+
+    return html`
+      <ul>
+        ${
+          reasons.map(x => html`<li>${x}</li>`)
+        }
+      </ul>
     `;
   }
 
