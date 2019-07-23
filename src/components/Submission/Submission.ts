@@ -14,6 +14,7 @@ class Submission extends Litrender(HTMLElement) {
     inputType: 'upload',
     ncbiAccountNo: '',
     selectedfFileName: null,
+    strictness: 'relaxed',
     isValidEmail: null,
   };
 
@@ -40,7 +41,7 @@ class Submission extends Litrender(HTMLElement) {
 
   setFormData = (pairs: object) => {
     this.formData = { ...this.formData, ...pairs };
-     console.log(this.formData);
+    //  console.log(this.formData);
     this.invalidate(this.renderTemplate);
   }
 
@@ -130,16 +131,21 @@ class Submission extends Litrender(HTMLElement) {
               class="commonTemplate" id="email"
               name="email" type="email"
               placeholder="abc@email.com"
-              style="border-color: ${ this.displayErrorMessage() ? 'red' : 'inherit' };"
+              style="border-color: ${ this.displayErrorMessage() ? '#810e15' : 'inherit' };"
             />
-            <div style="display: ${ this.displayErrorMessage() ? 'block' : 'none' }; color:red;">
-              <b style="font-size: .7rem;">Invalid email format</b>
+            <div style="display: ${ this.displayErrorMessage() ? 'block' : 'none' }; color: #810e15;">
+              <b style="font-size: .7rem;">Invalid email address.</b>
             </div>
           </div>
 
           ${HeadingWithLine('Data Input')}
           <div class="dataInputContainer">
-            <select style="margin-right: .5rem" @input="${this.onUploadChoiceChange}" class="commonTemplate">
+            <select
+              style="margin-right: .5rem"
+              value=${this.formData.inputType}
+              @input="${this.onUploadChoiceChange}"
+              class="commonTemplate"
+            >
               <option>Select ------</option>
               <option value="upload">Upload File</option>
               <option value="get_from_ncbi">Get from NCBI</option>
@@ -157,7 +163,8 @@ class Submission extends Litrender(HTMLElement) {
                   `
                   : html`
                     <input
-                      @input="${(e) => { this.setFormData({ ncbiAccountNo: e.srcElement. value }) }}"
+                      @input="${(e) => { this.setFormData({ ncbiAccountNo: e.srcElement.value }) }}"
+                      value=${this.formData.ncbiAccountNo}
                       class="commonTemplate"
                       placeholder="NCBI acc #"
                     />
@@ -167,7 +174,15 @@ class Submission extends Litrender(HTMLElement) {
             </div>
           </div>
 
-          ${HeadingWithLine("Detection strictness")}
+          ${HeadingWithLine("Detection strictness", this.formData.strictness)}
+          <div>
+            <input
+              @input="${this.handleRangeInput}"
+              type="range"
+              class="strictnessRange"
+              min="0" max="2"
+            />
+          </div>
 
           ${HeadingWithLine("Extra features")}
 
@@ -177,7 +192,10 @@ class Submission extends Litrender(HTMLElement) {
     `;
   }
 
-  loadSampleInput = (e) => { e.preventDefault(); }
+  loadSampleInput = (e) => {
+    e.preventDefault();
+    this.setFormData({ ncbiAccountNo: '#ABCDEF', inputType: 'get_from_ncbi' });
+  }
 
   openExampleOuput = (e) => {
     e.preventDefault();
@@ -214,6 +232,17 @@ class Submission extends Litrender(HTMLElement) {
     const fileName = value.split("\\").slice(-1)[0];
     console.log(fileName);
     this.setFormData({ selectedfFileName: fileName });
+  }
+
+  handleRangeInput = (e: any) => {
+    const { value } = e.target;
+    if(value == 0) {
+      this.setFormData({ strictness: 'strict' });
+    } else if(value == 2) {
+      this.setFormData({ strictness: 'loose' });
+    } else {
+      this.setFormData({ strictness: 'relaxed' });
+    }
   }
 
   handleInput = (e: any) => {
