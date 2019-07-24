@@ -13,7 +13,8 @@ class Submission extends Litrender(HTMLElement) {
     email: '',
     inputType: 'upload',
     ncbiAccountNo: '',
-    selectedfFileName: null,
+    selectedFile1Name: null,
+    selectedFile2Name: null,
     strictness: 'relaxed',
     isValidEmail: null,
   };
@@ -21,9 +22,6 @@ class Submission extends Litrender(HTMLElement) {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-
-    // const { ServerNews } = store.getState();
-    // this.setNews(ServerNews);
 
     store.subscribe(() => {
     //   const { ServerNews } = store.getState();
@@ -34,14 +32,8 @@ class Submission extends Litrender(HTMLElement) {
     this.invalidate(this.renderTemplate);
   }
 
-  // setFormData = (field: string, val:any) => {
-  //   this.formData = { ...this.formData, [field]: val };
-  //   this.invalidate(this.renderTemplate);
-  // }
-
   setFormData = (pairs: object) => {
     this.formData = { ...this.formData, ...pairs };
-    //  console.log(this.formData);
     this.invalidate(this.renderTemplate);
   }
 
@@ -81,6 +73,7 @@ class Submission extends Litrender(HTMLElement) {
         .fileSelector {
           display: flex;
           justify-content: flex-end;
+          cursor: pointer;
           width: 300px;
           height: 2rem;
           border: 2px solid ${colors.darkGray};
@@ -99,6 +92,14 @@ class Submission extends Litrender(HTMLElement) {
           display: flex;
           align-items: center;
           padding-right: 5px;
+        }
+        .clearFile2Name {
+          display: ${this.formData.selectedFile2Name ? 'flex' : 'none'};
+          align-items: center;
+          color: red;
+          font-size: 20px;
+          cursor: pointer;
+          padding-left: .5rem;
         }
 
         @media screen and (max-width: 1056px) {
@@ -150,16 +151,42 @@ class Submission extends Litrender(HTMLElement) {
               <option value="upload">Upload File</option>
               <option value="get_from_ncbi">Get from NCBI</option>
             </select>
-            <input type="file" accept=".fa, .fna, .fasta" style="display: none;" id="hiddenSelector" @input="${this.handleFileSelection}" />
+            <input
+              type="file"
+              accept=".fa, .fna, .fasta, .gb, .gbk, .emb, .embl"
+              style="display: none;" id="hiddenFile1Selector"
+              @input="${e => this.handleFileSelection(e, 1)}"
+            />
+            <input
+              type="file"
+              accept=".gff,.gff3"
+              style="display: none;" id="hiddenFile2Selector"
+              @input="${e => this.handleFileSelection(e, 2)}"
+            />
             <div>
               ${
                 this.formData.inputType !== 'get_from_ncbi' ?
                   html`
-                    <div @click="${this.selectFiles}" class="fileSelector">
-                      <span id="fileName">${this.formData.selectedfFileName || 'No file chosen'}</span>
+                    <div @click="${this.selectFile1}" class="fileSelector">
+                      <span id="fileName">${this.formData.selectedFile1Name || 'No file chosen'}</span>
                       <span class="browseFileText">Browse File</span>
                     </div>
                     ${SmallText('Sequence file (GenBank / EMBL / FASTA format)')}
+
+                    ${this.formData.selectedFile1Name ? html`
+                      <span style="display: flex; padding-top: 1rem;">
+                        <div @click="${this.selectFile2}" class="fileSelector">
+                          <span id="fileName">
+                            ${this.formData.selectedFile2Name || 'No file chosen'}
+                          </span>
+                          <span class="browseFileText">Browse File</span>
+                        </div>
+                        <span class="clearFile2Name" @click="${ e => this.setFormData({ selectedFile2Name: null }) }">
+                          &#10005;
+                        </span>
+                      </span>
+                    ${SmallText('Feature annotations (optional, GFF3 format)')}
+                    ` : ''}
                   `
                   : html`
                     <input
@@ -217,7 +244,7 @@ class Submission extends Litrender(HTMLElement) {
 
   loadSampleInput = (e) => {
     e.preventDefault();
-    this.setFormData({ ncbiAccountNo: '#ABCDEF', inputType: 'get_from_ncbi' });
+    this.setFormData({ ncbiAccountNo: 'Y16952', inputType: 'get_from_ncbi' });
   }
 
   openExampleOuput = (e) => {
@@ -242,19 +269,31 @@ class Submission extends Litrender(HTMLElement) {
     return false;
   }
 
-  onUploadChoiceChange = (e) => { this.setFormData({ inputType: e.target.value }); }
-
-  selectFiles = (e) => {
-    e.preventDefault();
-    var hiddenSelector = this.shadowRoot.getElementById('hiddenSelector');
-    hiddenSelector.click();
+  onUploadChoiceChange = (e) => {
+    const { value } = e.target;
+    if(value !== this.inputType) {
+      this.setFormData({ inputType: value, selectedFile1Name: null, selectedFile2Name: null, ncbiAccountNo: '' });
+    } else {
+      this.setFormData({ inputType: value });
+    }
   }
-  
-  handleFileSelection = (e) => {
+
+  selectFile1 = (e) => {
+    e.preventDefault();
+    var hiddenFile1Selector = this.shadowRoot.getElementById('hiddenFile1Selector');
+    hiddenFile1Selector.click();
+  }
+
+  selectFile2 = (e) => {
+    e.preventDefault();
+    var hiddenFile2Selector = this.shadowRoot.getElementById('hiddenFile2Selector');
+    hiddenFile2Selector.click();
+  }
+
+  handleFileSelection = (e, fileNum) => {
     const { target: { value } } = e;
     const fileName = value.split("\\").slice(-1)[0];
-    console.log(fileName);
-    this.setFormData({ selectedfFileName: fileName });
+    this.setFormData({ ['selectedFile' + fileNum + 'Name']: fileName });
   }
 
   handleRangeInput = (e: any) => {
