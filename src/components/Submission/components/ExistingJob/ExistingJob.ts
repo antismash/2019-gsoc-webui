@@ -1,9 +1,12 @@
 import { html } from 'lit-html';
 import LitRender from '../../../LitRender';
+import axios from 'axios';
 
 import colors from '../../../../utils/theme';
 
 class ExistingJob extends LitRender(HTMLElement) {
+  jobId: String = null;
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -50,6 +53,7 @@ class ExistingJob extends LitRender(HTMLElement) {
       <div>
         <h3>antiSMASH job id for existing job</h3>
         <input
+          @input="${e => {this.jobId = e.target.value;}}"
           class="commonTemplate" id="jobId"
           title="Enter Job ID"
           name="jobId"
@@ -72,6 +76,9 @@ class ExistingJob extends LitRender(HTMLElement) {
 
   handleInput = (e) => {
     e.preventDefault();
+    if(this.jobId) {
+      axios.get(`/status/${this.jobId}`);
+    }
   }
 }
 
