@@ -132,6 +132,8 @@ class Submission extends Litrender(HTMLElement) {
               class="commonTemplate" id="email"
               name="email" type="email"
               placeholder="abc@email.com"
+              onfocus="this.placeholder = ''"
+              onblur="this.placeholder = 'abc@email.com'"
               style="border-color: ${ this.displayErrorMessage() ? '#810e15' : 'inherit' };"
             />
             <div style="display: ${ this.displayErrorMessage() ? 'block' : 'none' }; color: #810e15;">
@@ -214,7 +216,7 @@ class Submission extends Litrender(HTMLElement) {
 
           ${HeadingWithLine("Extra features")}
 
-          <button class="btn" type="submit" @click="${this.handleInput}">Submit</button>
+          <button class="btn" type="submit" style="margin-left: 0;" @click="${this.handleInput}" disabled>Submit</button>
         </form>
       </div>
     `;
