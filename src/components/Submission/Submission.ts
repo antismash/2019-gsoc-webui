@@ -8,6 +8,7 @@ import SmallText from './components/SmallText';
 
 class Submission extends Litrender(HTMLElement) {
   loading: boolean = false;
+  inputPage: number = 2;
   inputType: String = 'upload';
   formData = {
     email: '',
@@ -44,6 +45,24 @@ class Submission extends Litrender(HTMLElement) {
     return html`
       <style>
         .container { padding: 1rem; }
+        ::placeholder { opacity: 0.6; }
+        .navigation {
+          display: flex;
+          padding: 0;
+          height: 3rem;
+          width: 100%;
+          background-color: ${colors.gray};
+          color: #000;
+        }
+        li { list-style: none; }
+        .navTab {
+          display: flex;
+          align-items: center;
+          padding: 0 2rem;
+          height: 100%;
+          cursor: pointer;
+        }
+        .navActive { background: #000; color: #fff; }
         .section1 { display: flex; align-items: center; }
         .btnContainer { margin-left: 5rem; }
         .btn {
@@ -59,6 +78,7 @@ class Submission extends Litrender(HTMLElement) {
           cursor: pointer;
           text-transform: uppercase;
         }
+        .btn:hover { background: ${colors.darkGray}; color: white; transition: all 0.4s; }
         .commonTemplate {
           height: 2rem;
           background: white;
@@ -70,7 +90,6 @@ class Submission extends Litrender(HTMLElement) {
           font-weight: bold;
           outline: none;
         }
-        .btn:hover { background: ${colors.darkGray}; color: white; transition: all 0.4s; }
         .dataInputContainer { display: flex; }
         .fileSelector {
           display: flex;
@@ -108,6 +127,8 @@ class Submission extends Litrender(HTMLElement) {
           align-items: center;
           cursor: pointer;
           font-weight: bold;
+          user-select: none;
+          -moz-user-select: none;
         }
 
         @media screen and (max-width: 1056px) {
@@ -131,13 +152,35 @@ class Submission extends Litrender(HTMLElement) {
         }
       </style>
       <div class="container">
-        <form id="submission-form" novalidate>
+        <ul class="navigation">
+          <li
+            class="navTab ${this.inputPage === 1 ? 'navActive' : ''}"
+            id="inputPage1"
+            @click="${e => { this.inputPage = 1; this.invalidate(this.renderTemplate) }}"
+          >
+            Nucleotide input
+          </li>
+          <li
+            class="navTab ${this.inputPage === 2 ? 'navActive' : ''}"
+            id="inputPage2"
+            @click="${e => { this.inputPage = 2; this.invalidate(this.renderTemplate) }}"
+          >
+            Results for existing job
+          </li>
+        </ul>
+
+        <!-- Nucleotide input component -->
+        <form
+          id="submission-form"
+          style="display: ${this.inputPage === 1 ? 'block' : 'none'}"
+          novalidate
+        >
 
           <div class="section1">
             <div>Search a genome sequence for secondary metabolite biosynthetic gene clusters</div>
             <div class="btnContainer">
-              <button class="btn" @click="${this.loadSampleInput}">Load Sample Input</button>
-              <button class="btn" @click="${this.openExampleOuput}">Open Example Output</button>
+              <button class="btn" title="load sample input" @click="${this.loadSampleInput}">Load Sample Input</button>
+              <button class="btn" title="download example output" @click="${this.openExampleOuput}">Open Example Output</button>
             </div>
           </div>
 
@@ -147,6 +190,7 @@ class Submission extends Litrender(HTMLElement) {
             <input
               @input="${this.handleEmailChange}"
               class="commonTemplate" id="email"
+              title="Enter email ID, you want to be notified on"
               name="email" type="email"
               placeholder="abc@email.com"
               onfocus="this.placeholder = ''"
@@ -162,6 +206,7 @@ class Submission extends Litrender(HTMLElement) {
           <div class="dataInputContainer">
             <select
               style="margin-right: .5rem"
+              title="select the input type"
               value=${this.formData.inputType}
               @input="${this.onUploadChoiceChange}"
               class="commonTemplate"
@@ -186,21 +231,21 @@ class Submission extends Litrender(HTMLElement) {
               ${
                 this.formData.inputType !== 'get_from_ncbi' ?
                   html`
-                    <div @click="${this.selectFile1}" class="fileSelector">
+                    <div @click="${this.selectFile1}" title="Browse sequence file" class="fileSelector">
                       <span id="fileName">${this.formData.selectedFile1Name || 'No file chosen'}</span>
                       <span class="browseFileText">Browse File</span>
                     </div>
                     ${SmallText('Sequence file (GenBank / EMBL / FASTA format)')}
 
                     ${this.formData.selectedFile1Name ? html`
-                      <span style="display: flex; padding-top: 1rem;">
+                      <span style="display: flex; padding-top: 1rem;" title="Browse feature annotation file">
                         <div @click="${this.selectFile2}" class="fileSelector">
                           <span id="fileName">
                             ${this.formData.selectedFile2Name || 'No file chosen'}
                           </span>
                           <span class="browseFileText">Browse File</span>
                         </div>
-                        <span class="clearFile2Name" @click="${ e => this.setFormData({ selectedFile2Name: null }) }">
+                        <span class="clearFile2Name" title="clear optional file" @click="${ e => this.setFormData({ selectedFile2Name: null }) }">
                           &#10005;
                         </span>
                       </span>
@@ -225,6 +270,7 @@ class Submission extends Litrender(HTMLElement) {
             <input
               @input="${this.handleRangeInput}"
               type="range"
+              title="slide to select strictness"
               class="strictnessRange"
               min="0" max="2"
             />
@@ -237,7 +283,7 @@ class Submission extends Litrender(HTMLElement) {
             html`
               <div class="check">
                 <input type="checkbox" id='selectAllFeatures' @click="${this.selectAllFeatures}" /> &nbsp;
-                <label style="font-size: 0.85rem" for='selectAllFeatures'>Select All</label>
+                <label style="font-size: 0.85rem; cursor: pointer;" for='selectAllFeatures'>Select All</label>
               </div>
             `
           )}
@@ -269,8 +315,21 @@ class Submission extends Litrender(HTMLElement) {
             }
           </div>
 
-          <button class="btn" type="submit" style="margin-left: 0;" @click="${this.handleInput}" disabled>Submit</button>
+          <button
+            class="btn"
+            type="submit"
+            style="margin-left: 0;"
+            @click="${this.handleInput}"
+            disabled
+          >
+            Submit
+          </button>
         </form>
+
+        <!-- result for existing job component -->
+        <div style="display: ${this.inputPage == 2 ? 'block' : 'none'}">
+          <existing-job></existing-job>
+        </div>
       </div>
     `;
   }
