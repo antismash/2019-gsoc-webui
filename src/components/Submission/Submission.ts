@@ -17,6 +17,7 @@ class Submission extends Litrender(HTMLElement) {
     selectedFile2Name: null,
     strictness: 'relaxed',
     isValidEmail: null,
+    selectedFeatures: [true, false, true, true, false, false],
   };
 
   constructor() {
@@ -39,6 +40,7 @@ class Submission extends Litrender(HTMLElement) {
 
   renderTemplate = () => {
     console.log(this.formData);
+    const checkBoxText = ['KnownClusterBlast', 'ClusterBlast', 'SubClusterBlast', 'ActiveSiteFinder', 'Cluster Pfam analysis','Pfam-based GO term annotation'];
     return html`
       <style>
         .container { padding: 1rem; }
@@ -52,7 +54,7 @@ class Submission extends Litrender(HTMLElement) {
           border: 2px solid ${colors.darkGray};
           color: ${colors.darkGray};
           padding: 0 1rem;
-          margin: 2px 1rem;
+          margin: 2px 1rem 2px 0;
           font-weight: bold;
           cursor: pointer;
           text-transform: uppercase;
@@ -101,6 +103,12 @@ class Submission extends Litrender(HTMLElement) {
           cursor: pointer;
           padding-left: .5rem;
         }
+        .check {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          font-weight: bold;
+        }
 
         @media screen and (max-width: 1056px) {
           .section1 { flex-direction: column; text-align: center; }
@@ -110,6 +118,15 @@ class Submission extends Litrender(HTMLElement) {
           .dataInputContainer {
             display: grid;
             grid-row-gap: 1rem;
+          }
+        }
+        @media screen and (min-width: 700px) {
+          .checkboxContainer {
+            width: 100%;
+            display: grid;
+            grid-template-columns: auto auto auto;
+            justify-content: space-between;
+            grid-row-gap: 0.7rem;
           }
         }
       </style>
@@ -214,7 +231,43 @@ class Submission extends Litrender(HTMLElement) {
             ${this.renderWarning(this.formData.strictness)}
           </div>
 
-          ${HeadingWithLine("Extra features")}
+          ${HeadingWithLine(
+            "Extra features",
+            null,
+            html`
+              <div class="check">
+                <input type="checkbox" id='selectAllFeatures' @click="${this.selectAllFeatures}" /> &nbsp;
+                <label style="font-size: 0.85rem" for='selectAllFeatures'>Select All</label>
+              </div>
+            `
+          )}
+          <div class="checkboxContainer" style="margin-bottom: 1.2rem;">
+            ${
+              checkBoxText.map((checkBoxLabel, i) => html`
+                  <div class="check">
+                  ${
+                    this.formData.selectedFeatures[i] ? html`
+                      <input
+                        @click="${e => this.handleCheck(e.target.checked, i)}"
+                        type="checkbox"
+                        id=${'check-box' + i}
+                        checked
+                      />
+                    `: html`
+                      <input
+                        @click="${e => this.handleCheck(e.target.checked, i)}"
+                        type="checkbox"
+                        id=${'check-box' + i}
+                      />
+                    `
+                  }
+                    &nbsp;
+                    <label for=${'check-box' + i}>${checkBoxLabel}</label>
+                  </div>
+                `
+              )
+            }
+          </div>
 
           <button class="btn" type="submit" style="margin-left: 0;" @click="${this.handleInput}" disabled>Submit</button>
         </form>
@@ -312,6 +365,16 @@ class Submission extends Litrender(HTMLElement) {
   handleInput = (e: any) => {
     e.preventDefault();
     console.log(e);
+  }
+
+  selectAllFeatures = ({ target:{ checked }}) => {
+    this.setFormData({ selectedFeatures: [... Array(6).fill(checked ? true : false)] })
+  }
+
+  handleCheck = (checked, i) => {
+    let { selectedFeatures } = this.formData;
+    selectedFeatures[i] = checked ? true : false;
+    this.setFormData({ selectedFeatures  });
   }
 }
 
