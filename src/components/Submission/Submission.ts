@@ -8,7 +8,7 @@ import SmallText from './components/SmallText';
 
 class Submission extends Litrender(HTMLElement) {
   loading: boolean = false;
-  inputPage: number = 2;
+  inputPage: number = 1;
   inputType: String = 'upload';
   formData = {
     email: '',
@@ -48,11 +48,14 @@ class Submission extends Litrender(HTMLElement) {
         ::placeholder { opacity: 0.6; }
         .navigation {
           display: flex;
+          justify-content: "flex-end";
           padding: 0;
           height: 3rem;
           width: 100%;
           background-color: ${colors.gray};
           color: #000;
+          font-size: 1rem;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
         li { list-style: none; }
         .navTab {
@@ -61,8 +64,12 @@ class Submission extends Litrender(HTMLElement) {
           padding: 0 2rem;
           height: 100%;
           cursor: pointer;
+          border-right: 1px solid #fff;
         }
-        .navActive { background: #000; color: #fff; }
+        .navTab:hover {
+          background: ${colors.darkGray}; color: #fff;
+        }
+        .navActive { background: ${colors.darkGray}; color: #fff; }
         .section1 { display: flex; align-items: center; }
         .btnContainer { margin-left: 5rem; }
         .btn {
@@ -77,8 +84,13 @@ class Submission extends Litrender(HTMLElement) {
           font-weight: bold;
           cursor: pointer;
           text-transform: uppercase;
+          transition: all 0.35s;
         }
-        .btn:hover { background: ${colors.darkGray}; color: white; transition: all 0.4s; }
+        .btn, .navigation, .check {
+          user-select: none;
+          -moz-user-select: none;
+        }
+        .btn:hover { background: ${colors.darkGray}; color: white; transition: all 0.35s; }
         .commonTemplate {
           height: 2rem;
           background: white;
@@ -127,8 +139,6 @@ class Submission extends Litrender(HTMLElement) {
           align-items: center;
           cursor: pointer;
           font-weight: bold;
-          user-select: none;
-          -moz-user-select: none;
         }
 
         @media screen and (max-width: 1056px) {
@@ -186,16 +196,19 @@ class Submission extends Litrender(HTMLElement) {
 
           ${HeadingWithLine('Notification settings')}
           <div>
-            ${SmallText('Email address(optional)')}
+            ${SmallText('Email address (optional)')}
             <input
               @input="${this.handleEmailChange}"
               class="commonTemplate" id="email"
-              title="Enter email ID, you want to be notified on"
+              title="Enter email ID, you want to be notified at"
               name="email" type="email"
               placeholder="abc@email.com"
               onfocus="this.placeholder = ''"
               onblur="this.placeholder = 'abc@email.com'"
-              style="border-color: ${ this.displayErrorMessage() ? '#810e15' : 'inherit' };"
+              style="
+                border-color: ${ this.displayErrorMessage() ? '#810e15' : 'inherit' };
+                padding-left: .5rem;
+              "
             />
             <div style="display: ${ this.displayErrorMessage() ? 'block' : 'none' }; color: #810e15;">
               <b style="font-size: .7rem;">Invalid email address.</b>
@@ -320,7 +333,7 @@ class Submission extends Litrender(HTMLElement) {
             type="submit"
             style="margin-left: 0;"
             @click="${this.handleInput}"
-            disabled
+            disabled="false"
           >
             Submit
           </button>
