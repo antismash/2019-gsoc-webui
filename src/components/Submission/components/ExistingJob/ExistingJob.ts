@@ -31,7 +31,7 @@ class ExistingJob extends LitRender(HTMLElement) {
           min-width: 350px;
         }
         .btn {
-          min-height: 2rem;
+          min-height: calc(2rem + 4px);
           background: white;
           border: none;
           border-radius: 5px;
@@ -61,11 +61,9 @@ class ExistingJob extends LitRender(HTMLElement) {
           onfocus="this.placeholder = ''"
           onblur="this.placeholder='taxon-aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee'"
         />
-        <br />
         <button
           class="btn"
           type="submit"
-          style="margin-left: 0;"
           @click="${this.handleInput}"
         >
           Submit
