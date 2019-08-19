@@ -74,8 +74,15 @@ class ExistingJob extends LitRender(HTMLElement) {
 
   handleInput = (e) => {
     e.preventDefault();
-    if(this.jobId) {
-      axios.get(`/status/${this.jobId}`);
+    console.log(this.jobId);
+    if (this.jobId.substr(0, 8).toLowerCase() == 'bacteria') {
+      window.location.href = "http://antismash.secondarymetabolites.org/#!/show/job/" + this.jobId;
+    }
+    else if (this.jobId.substr(0, 5).toLowerCase() == 'fungi') {
+        window.location.href = "http://fungismash.secondarymetabolites.org/#!/show/job/" + this.jobId;
+    }
+    else if (this.jobId.substr(0, 6).toLowerCase() == 'plants') {
+        window.location.href = "http://plantismash.secondarymetabolites.org/#!/show/job/" + this.jobId;
     }
   }
 }
