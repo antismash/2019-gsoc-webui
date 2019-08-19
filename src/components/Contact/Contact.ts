@@ -8,6 +8,8 @@ class Contact extends LitRender(HTMLElement) {
   email: String = null;
   message: String = null;
   isValidEmail = null;
+  isValidMessage = true;
+  isFormValid = false;
 
   constructor() {
     super();
@@ -84,8 +86,11 @@ class Contact extends LitRender(HTMLElement) {
               <textarea
                 class="commonTemplate"
                 style="min-height: 120px; padding: 0.5rem;"
-                @input="${e => {this.message = e.target.value; this.invalidate(this.renderTemplate)}}"              
+                @input="${this.validateMessage}"
               ></textarea>
+              <div style="display: ${ this.isValidMessage ? 'none' : 'block' }; color: #810e15;">
+                <b style="font-size: .7rem;">Message required</b>
+              </div>
             </div>
 
             <button
@@ -93,9 +98,8 @@ class Contact extends LitRender(HTMLElement) {
               type="submit"
               style="margin-left: 0;"
               @click="${this.handleSubmission}"
-              disabled="false"
             >
-              Submit
+              Send
             </button>
           </form>
         </div>
@@ -103,12 +107,17 @@ class Contact extends LitRender(HTMLElement) {
     `;
   }
 
-  handleEmailChange = async (e) => {
-    const validationStr = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/;
-    const val = e.target.value;
+  SmallText = (text) => html`
+    <div style="margin-bottom: 2px">
+      <b style="font-size: .7rem;">${text}</b>
+    </div>
+  `;
 
-    this.isValidEmail = validationStr.test(val) ? true : false;
+  handleEmailChange = async (e) => {
+    const val = e.target.value;
+    this.isValidEmail = this.validateEmail(val);
     this.email = val;
+    this.validateForm();
     this.invalidate(this.renderTemplate);
   }
 
@@ -119,15 +128,47 @@ class Contact extends LitRender(HTMLElement) {
     return false;
   }
 
-  SmallText = (text) => html`
-    <div style="margin-bottom: 2px">
-      <b style="font-size: .7rem;">${text}</b>
-    </div>
-  `;
+  validateEmail = (val) => {
+    const validationStr = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/;
+    return validationStr.test(val);
+  }
 
-  handleSubmission = e => {
-    e.preventDefault();
-    console.log(this.email, this.message);
+  validateMessage = (e) => {
+    const val = e.target.value;
+    this.message = val;
+    this.isValidMessage = val !== null;
+    this.validateForm();
+    this.invalidate(this.renderTemplate);
+  }
+
+  validateForm = () => {
+    this.isFormValid = this.isValidEmail && this.isValidMessage;
+  }
+
+  handleSubmission = async (e: any) => {
+    try {
+      e.preventDefault();
+      console.log(e);
+
+      if(this.message === null || this.message === '') {
+        this.isValidMessage = false;
+        this.invalidate(this.renderTemplate);
+      }
+
+      if(this.isFormValid) {
+        const data = {
+          email: this.email,
+          message: this.message,
+        };
+  
+        await axios.post('/email/send', data);
+        alert('Successfully sent');
+      } else {
+        alert('Something went wrong');
+      }
+    } catch(err) {
+      alert('Something went wrong');
+    }
   }
 }
 
