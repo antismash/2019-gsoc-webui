@@ -1,7 +1,7 @@
 import { html } from 'lit-html';
+import axios from 'axios';
 
 import Litrender from '../LitRender';
-import store from '../../Store';
 import colors from '../../utils/theme';
 import HeadingWithLine from './components/HeadingWithLine';
 import SmallText from './components/SmallText';
@@ -13,7 +13,7 @@ class Submission extends Litrender(HTMLElement) {
   formData = {
     email: '',
     inputType: 'upload',
-    ncbiAccountNo: '',
+    ncbi: '',
     selectedFile1Name: null,
     selectedFile2Name: null,
     strictness: 'relaxed',
@@ -25,12 +25,6 @@ class Submission extends Litrender(HTMLElement) {
     super();
     this.attachShadow({ mode: 'open' });
 
-    store.subscribe(() => {
-    //   const { ServerNews } = store.getState();
-    //   this.setNews(ServerNews);
-    //   this.invalidate(this.renderTemplate);
-    });
-
     this.invalidate(this.renderTemplate);
   }
 
@@ -40,7 +34,7 @@ class Submission extends Litrender(HTMLElement) {
   }
 
   renderTemplate = () => {
-    console.log(this.formData);
+    // console.log(this.formData);
     const checkBoxText = ['KnownClusterBlast', 'ClusterBlast', 'SubClusterBlast', 'ActiveSiteFinder', 'Cluster Pfam analysis','Pfam-based GO term annotation'];
     return html`
       <style>
@@ -267,8 +261,8 @@ class Submission extends Litrender(HTMLElement) {
                   `
                   : html`
                     <input
-                      @input="${(e) => { this.setFormData({ ncbiAccountNo: e.srcElement.value }) }}"
-                      value=${this.formData.ncbiAccountNo}
+                      @input="${(e) => { this.setFormData({ ncbi: e.srcElement.value }) }}"
+                      value=${this.formData.ncbi}
                       class="commonTemplate"
                       placeholder="NCBI acc #"
                     />
@@ -332,8 +326,7 @@ class Submission extends Litrender(HTMLElement) {
             class="btn"
             type="submit"
             style="margin-left: 0;"
-            @click="${this.handleInput}"
-            disabled="false"
+            @click="${this.submitForm}"
           >
             Submit
           </button>
@@ -371,7 +364,7 @@ class Submission extends Litrender(HTMLElement) {
 
   loadSampleInput = (e) => {
     e.preventDefault();
-    this.setFormData({ ncbiAccountNo: 'Y16952', inputType: 'get_from_ncbi' });
+    this.setFormData({ ncbi: 'Y16952', inputType: 'get_from_ncbi' });
   }
 
   openExampleOuput = (e) => {
@@ -383,7 +376,6 @@ class Submission extends Litrender(HTMLElement) {
     const validationStr = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/;
     const val = e.target.value;
     if(validationStr.test(val)) {
-      console.log('valid');
       this.setFormData({ isValidEmail: true, email: val });
     } else { this.setFormData({isValidEmail: false, email: val}); }
   }
@@ -399,7 +391,7 @@ class Submission extends Litrender(HTMLElement) {
   onUploadChoiceChange = (e) => {
     const { value } = e.target;
     if(value !== this.inputType) {
-      this.setFormData({ inputType: value, selectedFile1Name: null, selectedFile2Name: null, ncbiAccountNo: '' });
+      this.setFormData({ inputType: value, selectedFile1Name: null, selectedFile2Name: null, ncbi: '' });
     } else {
       this.setFormData({ inputType: value });
     }
@@ -434,11 +426,6 @@ class Submission extends Litrender(HTMLElement) {
     }
   }
 
-  handleInput = (e: any) => {
-    e.preventDefault();
-    console.log(e);
-  }
-
   selectAllFeatures = ({ target:{ checked }}) => {
     this.setFormData({ selectedFeatures: [... Array(6).fill(checked ? true : false)] })
   }
@@ -447,6 +434,55 @@ class Submission extends Litrender(HTMLElement) {
     let { selectedFeatures } = this.formData;
     selectedFeatures[i] = checked ? true : false;
     this.setFormData({ selectedFeatures  });
+  }
+
+  isJobValid = () => {
+    const {inputType, selectedFile1Name, ncbi} = this.formData;
+    if (inputType == 'upload') {
+      if (!selectedFile1Name) {
+          return false;
+      }
+    } else {
+      if (!ncbi) {
+          return false;
+      }
+    }
+    return true;
+  }
+
+  submitForm = async (e: any) => {
+    this.loading = true;
+    try {
+      e.preventDefault();
+      if(this.isJobValid()) {
+        const {selectedFile2Name, selectedFile1Name, email, ncbi, selectedFeatures} = this.formData;
+        const payload = {
+          jobtype: 'antismash5',
+          seq: selectedFile1Name,
+          gff3: selectedFile2Name,
+          geneFinder: selectedFile2Name ? 'none' : 'prodigal',
+          email,
+          ncbi,
+          knownclusterblast: selectedFeatures[0],
+          clusterblast: selectedFeatures[1],
+          subclusterblast: selectedFeatures[2],
+          asf: selectedFeatures[3],
+          clusterhmmer: selectedFeatures[4],
+          pfam2go: selectedFeatures[5],
+        };
+
+        const {data: {id}} = await axios.post('/submit', payload);
+        console.log('success----JOB_ID: ', id);
+        window.location.href = `/status/${id}`;
+      } else {
+        console.log('Not a valid job');
+      }
+    } catch(err) {
+      const { message } = err;
+      console.log(message);
+    } finally {
+      this.loading = false;
+    }
   }
 }
 

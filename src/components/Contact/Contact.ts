@@ -148,7 +148,6 @@ class Contact extends LitRender(HTMLElement) {
   handleSubmission = async (e: any) => {
     try {
       e.preventDefault();
-      console.log(e);
 
       if(this.message === null || this.message === '') {
         this.isValidMessage = false;
@@ -162,9 +161,9 @@ class Contact extends LitRender(HTMLElement) {
         };
   
         await axios.post('/email/send', data);
-        alert('Successfully sent');
+        console.log('Successfully sent');
       } else {
-        alert('Something went wrong');
+        console.log('Something went wrong');
       }
     } catch(err) {
       alert('Something went wrong');
