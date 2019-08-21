@@ -52,12 +52,32 @@
    * ``` npm start ```
 
 ### Using various components
+
+To use the following tags as UI component you have to import "common-ui-antismash" package in root javascript file. Like following if you are using it in React, Angular etc..
+
+    import * as commonUI from common-ui-antismash
+
 Include following custom tags into index.html -
-* Stats component: ```<server-stats></server-stats>```
 
-* News component: ```<server-news heading="{NEWS HEADING}" text={{TEXT TO BE SHOWN (BELOW HEADING)}></server-news>```
+* Stats component:
 
-* Error component: ```<server-news type="error" heading="{HEADING OF ERROR}" text="{TEXT TO BE SHOWN (BELOW HEADING)}"></server-news>```
+    ```<server-stats></server-stats>```
+
+* News component:
+
+    ```<server-news heading="{NEWS HEADING}" text={{TEXT TO BE SHOWN (BELOW HEADING)}></server-news>```
+
+* Error component:
+
+    ```<server-news type="error" heading="{HEADING OF ERROR}" text="{TEXT TO BE SHOWN (BELOW HEADING)}"></server-news>```
+
+* Submission component:
+
+    ```<common-submission></common-submission>```
+
+* Contact component:
+
+    ``` <contact-us></contact-us> ```
 
 ### Useful Links
 * A demo project on lit-html : https://github.com/Polymer/lit-html/blob/master/demo/clock

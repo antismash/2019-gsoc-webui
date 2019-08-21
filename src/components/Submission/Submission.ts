@@ -156,6 +156,7 @@ class Submission extends Litrender(HTMLElement) {
         }
       </style>
       <div class="container">
+        <server-news></server-news>
         <ul class="navigation">
           <li
             class="navTab ${this.inputPage === 1 ? 'navActive' : ''}"

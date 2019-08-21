@@ -51,7 +51,7 @@ class ExistingJob extends LitRender(HTMLElement) {
         ::placeholder { opacity: 0.6; }
       </style>
       <div>
-        <h3>antiSMASH job id for existing job</h3>
+        <h3 style="margin-top: 2rem; margin-bottom: 0;">antiSMASH job id for existing job</h3>
         <input
           @input="${e => {this.jobId = e.target.value;}}"
           class="commonTemplate" id="jobId"
