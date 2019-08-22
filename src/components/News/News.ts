@@ -9,6 +9,7 @@ import store from '../../Store';
 class News extends Litrender(HTMLElement) {
   news: NewsInterface;
   loading: boolean = false;
+  errorLoading: boolean = false;
 
   setNews(data) {
     this.news = { ...data };
@@ -41,7 +42,6 @@ class News extends Litrender(HTMLElement) {
         values: { ...ServerNews }
       });
       this.loading = false;
-      this.invalidate(this.renderTemplate);
     } catch (err) {
       this.setNews({
         notices: [
@@ -51,7 +51,10 @@ class News extends Litrender(HTMLElement) {
           }
         ]
       });
+      this.errorLoading = true;
       console.log(err);
+    } finally {
+      this.invalidate(this.renderTemplate);
     }
   }
 
@@ -83,6 +86,7 @@ class News extends Litrender(HTMLElement) {
           opacity: ${this.loading ? 0 : 1};
           border-radius: 5px;
           transition: opacity 1s;
+          display: ${this.errorLoading && !this.textMessage ? 'none' : 'block'};
         }
         #container {
           position: absolute;

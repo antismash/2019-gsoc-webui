@@ -1,18 +1,20 @@
 {
   "name": "common-ui-antismash",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Common UI Library for Bacterial, Fungal UIs",
-  "main": "index.ts",
+  "main": "dist/bundle.js",
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --port 3001"
   },
-  "authors": ["Jeevan Prakash"],
+  "authors": [
+    "Jeevan Prakash"
+  ],
   "license": "AGPL-3.0",
   "dependencies": {
-    "axios": "^0.18.0",
-    "lit-html": "^1.1.0",
-    "redux": "^4.0.1"
+    "axios": "^0.19.0",
+    "lit-html": "^1.1.2",
+    "redux": "^4.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
