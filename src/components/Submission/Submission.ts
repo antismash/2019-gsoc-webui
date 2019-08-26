@@ -51,6 +51,7 @@ class Submission extends Litrender(HTMLElement) {
           font-size: 1rem;
           box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
         }
+        li { list-style: none; }
         .navTab {
           display: flex;
           align-items: center;
@@ -126,6 +127,15 @@ class Submission extends Litrender(HTMLElement) {
           font-size: 20px;
           cursor: pointer;
           padding-left: .5rem;
+        }
+        .sliderContainer {
+          display: flex;
+          align-items: flex-start;
+        }
+        .slideLabel {
+          display: flex;
+          width: 250px;
+          justify-content: space-between;
         }
         .check {
           display: flex;
@@ -273,15 +283,24 @@ class Submission extends Litrender(HTMLElement) {
           </div>
 
           ${HeadingWithLine("Detection strictness", this.formData.strictness)}
-          <div>
-            <input
-              @input="${this.handleRangeInput}"
-              type="range"
-              title="slide to select strictness"
-              class="strictnessRange"
-              min="0" max="2"
-            />
-            ${this.renderWarning(this.formData.strictness)}
+          <div class="sliderContainer">
+            <div>
+              <div class="slideLabel">
+                <div>strict</div>
+                <div>relaxed</div>
+                <div>loose</div>
+              </div>
+              <input
+                @input="${this.handleRangeInput}"
+                type="range"
+                title="slide to select strictness"
+                style="width: 250px"
+                min="0" max="2"
+              />
+            </div>
+            <div>
+              ${this.renderWarning(this.formData.strictness)}
+            </div>
           </div>
 
           ${HeadingWithLine(
@@ -356,7 +375,7 @@ class Submission extends Litrender(HTMLElement) {
     return html`
       <ul>
         ${
-          reasons.map(x => html`<li>${x}</li>`)
+          reasons.map(x => html`<li style="list-style: square">${x}</li>`)
         }
       </ul>
     `;

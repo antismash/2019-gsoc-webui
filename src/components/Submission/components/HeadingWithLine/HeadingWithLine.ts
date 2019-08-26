@@ -14,7 +14,7 @@ const HeadingWithLine = (heading, supportText?: any, selectAllCheckBox ?: any) =
     }
     .warning {
       color: red;
-      font-size: 1.2rem;
+      font-size: 1rem;
       padding-left: 3rem;
     }
     @media screen and (max-width: 650px) {
@@ -24,13 +24,13 @@ const HeadingWithLine = (heading, supportText?: any, selectAllCheckBox ?: any) =
   <body>
     <div class="heading">
       <div>
-        ${heading}${supportText ? html`: <i style="font-size: 1.2rem">
+        ${heading}${supportText ? html`: <span style="font-size: 1.2rem">
           ${
             supportText == 'loose' ? html`
-              <i>${supportText}&Tab; <span class="warning">likely to cause false positives</span></i>
+              ${supportText}&Tab; <span class="warning">likely to cause false positives</span>
             ` : supportText
           }
-        </i>` : ''}
+        </span>` : ''}
       </div>
       ${ selectAllCheckBox !== null ? selectAllCheckBox : '' }
     </div>
